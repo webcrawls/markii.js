@@ -21,7 +21,11 @@ export default [
         ],
         plugins: [
             // resolve(), // so Rollup can find `ms`
-            typescript(), // so Rollup can parse TypeScript
+            typescript({
+                compilerOptions: {
+                    target: "es6"
+                }
+            }), // so Rollup can parse TypeScript
             commonjs() // so Rollup can convert `ms` to an ES module
         ]
     },
