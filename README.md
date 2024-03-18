@@ -1,46 +1,33 @@
-# rollup-starter-lib
+# markii.js
 
-[![Greenkeeper badge](https://badges.greenkeeper.io/rollup/rollup-starter-lib.svg)](https://greenkeeper.io/)
+> A lightweight, fast browser library to mimic the `<marquee>` elements of yesteryear
 
-This repo contains a bare-bones example of how to create a library using Rollup, including importing a module from `node_modules` and converting it from CommonJS.
+## Why?
 
-We're creating a library called `how-long-till-lunch`, which usefully tells us how long we have to wait until lunch, using the [ms](https://github.com/zeit/ms) package:
+The `<marquee>` element, originating as a non-standard feature of Internet Explorer, was never codified into the HTML
+spec. [Most browsers still support `<marquee>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/marquee#browser_compatibility),
+however, support is not, and will never be guaranteed.
 
-```js
-console.log('it will be lunchtime in ' + howLongTillLunch());
-```
+In our modern times, newer, _standardized_ features of JS and CSS have removed the need for a `<marquee>` element, and,
+along with accessibility conerns, there are many better ways to implement "an element that scrolls its content."
 
-## Getting started
+**markii.js** was created with the following goals:
 
-Clone this repository and install its dependencies:
+- mimic the behaviour of `<marquee>` elements (extending the idea where possible)
+- require no boilerplate - instead of JS, **markii.js** can look for `data-marquee` attributes.
+- exist alongside frameworks (or a lack-thereof) without incompatibilities
 
-```bash
-git clone https://github.com/rollup/rollup-starter-lib
-cd rollup-starter-lib
-npm install
-```
+## Installation
 
-`npm run build` builds the library to `dist`, generating three files:
+... TODO ...
 
-* `dist/how-long-till-lunch.cjs.js`
-    A CommonJS bundle, suitable for use in Node.js, that `require`s the external dependency. This corresponds to the `"main"` field in package.json
-* `dist/how-long-till-lunch.esm.js`
-    an ES module bundle, suitable for use in other people's libraries and applications, that `import`s the external dependency. This corresponds to the `"module"` field in package.json
-* `dist/how-long-till-lunch.umd.js`
-    a UMD build, suitable for use in any environment (including the browser, as a `<script>` tag), that includes the external dependency. This corresponds to the `"browser"` field in package.json
+## Usage
 
-`npm run dev` builds the library, then keeps rebuilding it whenever the source files change using [rollup-watch](https://github.com/rollup/rollup-watch).
+... TODO ...
 
-`npm test` builds the library, then tests it.
+## Contributing
 
-## Variations
+... TODO ...
 
-* [babel](https://github.com/rollup/rollup-starter-lib/tree/babel) — illustrates writing the source code in ES2015 and transpiling it for older environments with [Babel](https://babeljs.io/)
-* [buble](https://github.com/rollup/rollup-starter-lib/tree/buble) — similar, but using [Bublé](https://buble.surge.sh/) which is a faster alternative with less configuration
-* [TypeScript](https://github.com/rollup/rollup-starter-lib/tree/typescript) — uses [TypeScript](https://www.typescriptlang.org/) for type-safe code and transpiling
+## Acknowledgements
 
-
-
-## License
-
-[MIT](LICENSE).
