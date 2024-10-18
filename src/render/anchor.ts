@@ -34,10 +34,13 @@ export class AnchorSingleRenderer implements MarqueeRenderer {
         // create a copy of the base element
         this.copy = createMarqueeCopy(this.element, this.id)
         this.wrapper.appendChild(this.copy)
+        this.element.parentNode?.appendChild(this.wrapper)
     
         // then, hide the base element (and set anchor-name)
         this.element.style.opacity = '0.0'
         this.element.style.anchorName = '--renderer'+this.id
+
+        console.log(this.wrapper)
     }
 
     remove(): void {
@@ -47,8 +50,9 @@ export class AnchorSingleRenderer implements MarqueeRenderer {
         const translateX = map(this.progressX, -1.0, 1.0, -120, 120)
         const translateY = map(this.progressY, -1.0, 1.0, -120, 120)
 
-        this.copy.style.transform = `translate(${Math.round(translateX)}%, ${Math.round(translateY)}%)`
-
+        let transform = `translate(${Math.round(translateX)}%, ${Math.round(translateY)}%)`
+        this.copy.style.transform = transform
+        
         if (this.progressX > 1) {
             this.progressX = -1.0
         }
@@ -102,11 +106,13 @@ export class TiledAnchorSingleRenderer implements MarqueeRenderer {
 
         // create a copy of the base element
         this.copy = createMarqueeCopy(this.element, this.id)
-        this.wrapper.appendChild(this.copy)
-    
+
         // then, hide the base element (and set anchor-name)
         this.element.style.opacity = '0.0'
         this.element.style.anchorName = '--renderer'+this.id
+
+        this.wrapper.appendChild(this.copy)
+        this.element.parentElement?.appendChild(this.wrapper)
     }
 
     remove(): void {
@@ -151,8 +157,6 @@ const createMarqueeWrapper = (parent: HTMLElement, id: number): HTMLElement => {
     wrapperElement.style.height = `${dimensions.height}px`
 
     wrapperElement.style.overflow = "hidden"
-
-    parent.parentElement?.appendChild(wrapperElement)
     return wrapperElement
 }
 
