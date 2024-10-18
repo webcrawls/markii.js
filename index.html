@@ -2,13 +2,34 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="stylesheet" href="/src/style.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Vite + TS</title>
+    <style>
+      body {
+        background-color: #1f1f1f;
+        color: whitesmoke;
+      }
+
+      h1 {
+        display: inline-block;
+      }
+    </style>
   </head>
   <body>
     <div id="app">
-      <h1 data-marquee-x="0.1">hello chat</h1>
+      <h1 data-marquee-x="0.005"
+          data-marquee-mode="anchor">hello chat</h1>
+      <br/>
+      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Cat_August_2010-4.jpg/1920px-Cat_August_2010-4.jpg"
+           width="150px"
+           height="150px"
+           data-marquee-x="0.01"
+           data-marquee-y="0.01"/>
+      <!-- <div style="width: 200px; height: 200px; background-color: darkgray; color: black; padding: 1rem;"
+            data-marquee-x="0.1" data-marquee-y="0.1" data-marquee-tiled="true">
+        <p>container can be tiled</p>
+        <p>superb cool</p>
+      </div> -->
     </div>
     <script type="module" src="/src/main.ts"></script>
   </body>
