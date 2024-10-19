@@ -8,14 +8,13 @@ export const DATA_MARQUEE_TILE = "data-marquee-tile"
 let marquees = {}
 
 const findElements = (parent: HTMLElement) => {
-
     const elements = parent.querySelectorAll(`[${DATA_MARQUEE_X_SPEED}], [${DATA_MARQUEE_Y_SPEED}]`)
     elements.forEach(el => {
-        if (el in marquees) return 
+        // if (el in marquees) return 
         console.log("making marquee", el)
         const marquee = createMarquee(el)
         marquee.start()
-        marquees[el] = marquee
+        // marquees[el] = marquee
     })
 }
 

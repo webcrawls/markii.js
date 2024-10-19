@@ -11,6 +11,10 @@
       padding: 0;
     }
 
+    ul {
+      margin-left: 1rem;;
+    }
+
     body {
       background-color: #1f1f1f;
       color: whitesmoke;
@@ -63,6 +67,12 @@
       <h2>demonstration</h2>
       <button id="hover-btn">Click me to enable 'marquee on hover' mode</button>
     </article>
+    <article>
+      <h2>caveats</h2>
+      <ul>
+        <li>Unfortunately, this library currently only works on the most recent versions of Chromium-based browsers. This is distressing as a Firefox user (and someone who cares about iOS market share). I will be implementing alternative rendering methods in the future.</li>
+      </ul>
+    </article>
   </main>
   <hr />
   <footer data-nohover>
@@ -93,7 +103,7 @@
     })
 
     document.addEventListener("mouseover", event => {
-      if (!enabled) return 
+      if (!enabled || currentElement) return 
       let target = event.target
 
       if (target === document.body || target.hasAttribute("data-nohover")) return;
