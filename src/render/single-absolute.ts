@@ -3,7 +3,7 @@ import { map } from "../math";
 
 let rendererCount = 0
 
-export class AnchorSingleRenderer implements MarqueeRenderer {
+export class AbsoluteSingleRenderer implements MarqueeRenderer {
 
     private id: number
     private element: HTMLElement
@@ -85,7 +85,6 @@ const createMarqueeWrapper = (parent: HTMLElement, id: number): HTMLElement => {
 
     wrapperElement.id = `markii-wrapper-${id}`
     wrapperElement.style.position = "absolute";
-    wrapperElement.style.top = `anchor(--renderer${id} self-start)`
     wrapperElement.style.width = `${dimensions.width}px`
     wrapperElement.style.height = `${dimensions.height}px`
 
@@ -97,7 +96,6 @@ const createMarqueeCopy = (base: HTMLElement, id: number): HTMLElement => {
     // create a "full copy" of the node?
     const copy: HTMLElement = base.cloneNode(true)
     copy.style.position = 'absolute';
-    copy.style.top = `anchor(--renderer${id} self-start)`
     copy.style.margin = '0'
     return copy
 }

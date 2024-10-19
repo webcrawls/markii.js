@@ -1,5 +1,6 @@
 import { DATA_MARQUEE_TILE, DATA_MARQUEE_X_SPEED, DATA_MARQUEE_Y_SPEED } from './main'
 import { type MarqueeRenderer } from './render'
+import { AbsoluteSingleRenderer } from './render/single-absolute'
 import { AnchorSingleRenderer } from './render/single-anchor'
 
 export interface MarqueeElement {
@@ -29,7 +30,7 @@ export const createMarquee = (element: HTMLElement): MarqueeElement => {
     if (element.children.length === 0) {
         renderer = new AnchorSingleRenderer(element)
     } else {
-        throw new Error("I don't knoiw how to Marquee-ify" + element)
+        throw new Error("I don't know how to Marquee-ify" + element)
     }
 
     renderer.speedY = parseFloat(element.getAttribute(DATA_MARQUEE_Y_SPEED) ?? "0.0")

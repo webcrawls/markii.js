@@ -66,6 +66,9 @@
     <article data-nohover>
       <h2>demonstration</h2>
       <button id="hover-btn">Click me to enable 'marquee on hover' mode</button>
+      <br/>
+      <input id="fill-btn" type="checkbox"/>
+      <label>Fill?</label>
     </article>
     <article>
       <h2>caveats</h2>
@@ -113,7 +116,11 @@
       }
 
       currentElement = target
+  
       currentElement.setAttribute("data-marquee-x", "" + speedX)
+      if (document.querySelector("#fill-btn").value) {
+        currentElement.setAttribute("data-marquee-fill", "true")        
+      }
     })
   </script>
 </body>
