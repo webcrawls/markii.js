@@ -1,48 +1,73 @@
-import { createMarquee } from './element'
+import { createMarquee, MarqueeElement } from './element'
 
-export const DATA_MARQUEE_X_SPEED = "data-marquee-x"
-export const DATA_MARQUEE_Y_SPEED = "data-marquee-y"
-export const DATA_MARQUEE_EXTRA = "data-marquee-extra"
-export const DATA_MARQUEE_TILE = "data-marquee-tile"
+export const DATA_MARQUEE_X_SPEED = "mq-speed-x"
+export const DATA_MARQUEE_Y_SPEED = "mq-speed-y"
+export const DATA_MARQUEE_TILING = "mq-tiled"
 
-let marquees = {}
+export class Markii {
 
-const findElements = (parent: HTMLElement) => {
-    const elements = parent.querySelectorAll(`[${DATA_MARQUEE_X_SPEED}], [${DATA_MARQUEE_Y_SPEED}]`)
-    elements.forEach(el => {
-        // if (el in marquees) return 
-        console.log("making marquee", el)
-        const marquee = createMarquee(el)
-        marquee.start()
-        // marquees[el] = marquee
-    })
-}
+    private root: HTMLElement
+    private observer: MutationObserver | undefined
+    private marquees: MarqueeElement[] = []
 
-export interface Markii {
-    watch(): void
-    stop(): void
-}
-
-export const createMarkii = (root?: HTMLElement): Markii => {
-    if (!root) root = document.body
-
-    const handleUpdate = (mutations) => {
-        findElements(root)
+    isMarquee(element: HTMLElement): boolean {
+        for (const marquee of this.marquees) {
+            if (marquee.element === element) return true
+        }
+        return false
     }
-    
-    let observer: MutationObserver = new MutationObserver(handleUpdate)
 
-    const watch = () => {
-        observer.observe(root, {
-            subtree: true,
-            attributeFilter: [DATA_MARQUEE_X_SPEED, DATA_MARQUEE_Y_SPEED]
+    watch() {
+        this.observer = new MutationObserver((mutations) => {
+            for (const mutation of mutations) {
+                this.processElement(mutation.target)
+            }
         })
+        this.observer.observe(this.root, { attributeFilter: [DATA_MARQUEE_X_SPEED, DATA_MARQUEE_Y_SPEED], subtree: true})
     }
 
-    const stop = () => {
-        observer.disconnect()
-        // clear all Marquees?
+    stop() {
+        this.observer?.disconnect()
+        for (const marquee of this.marquees) {
+            marquee.stop()
+        }
+        this.marquees = []
     }
 
-    return { watch, stop }
+    pause() {
+        throw new Error("Not implemented")
+    }
+
+    constructor(root?: HTMLElement) {
+        this.root = root ?? document.body
+        this.checkRoot()
+        this.watch()
+    }
+
+    private checkRoot() {
+        const elements = this.root.querySelectorAll(`[${DATA_MARQUEE_X_SPEED}], [${DATA_MARQUEE_Y_SPEED}]`)
+        elements.forEach(el => this.processElement(el))
+    }
+
+    private elementShouldMarquee(element: HTMLElement) {
+        return element.hasAttribute(DATA_MARQUEE_X_SPEED) || element.hasAttribute(DATA_MARQUEE_Y_SPEED)
+    }
+
+    private processElement(element: HTMLElement) {
+        const hasMarqueeFeatures = this.elementShouldMarquee(element)
+        if (this.isMarquee(element) && !hasMarqueeFeatures) {
+            // delete marquee
+            for (const marquee of this.marquees) {
+                if (marquee.element === element) {
+                    marquee.stop()
+                    this.marquees = this.marquees.filter(m => m !== marquee)
+                }
+            }
+        } else if (!this.isMarquee(element) && hasMarqueeFeatures) {
+            const m = createMarquee(element)
+            m.start()
+            this.marquees.push(m)
+        }
+    }
+
 }

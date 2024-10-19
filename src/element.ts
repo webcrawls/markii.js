@@ -1,6 +1,5 @@
-import { DATA_MARQUEE_TILE, DATA_MARQUEE_X_SPEED, DATA_MARQUEE_Y_SPEED } from './main'
+import { DATA_MARQUEE_X_SPEED, DATA_MARQUEE_Y_SPEED } from './main'
 import { type MarqueeRenderer } from './render'
-import { AbsoluteSingleRenderer } from './render/single-absolute'
 import { AnchorSingleRenderer } from './render/single-anchor'
 
 export interface MarqueeElement {
@@ -39,6 +38,7 @@ export const createMarquee = (element: HTMLElement): MarqueeElement => {
 
     const observer = new MutationObserver((changes) => {
         let hasAny = false
+
         for (let attr of [DATA_MARQUEE_X_SPEED, DATA_MARQUEE_Y_SPEED]) {
             if (element.hasAttribute(attr)) {
                 hasAny = true

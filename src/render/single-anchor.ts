@@ -3,6 +3,9 @@ import { map } from "../math";
 
 let rendererCount = 0
 
+/**
+ * A renderer that uses CSS Anchor to display a marquee "on top of" an element.
+ */
 export class AnchorSingleRenderer implements MarqueeRenderer {
 
     private id: number
@@ -35,8 +38,8 @@ export class AnchorSingleRenderer implements MarqueeRenderer {
         this.copy = createMarqueeCopy(this.element, this.id)
         this.wrapper.appendChild(this.copy)
         this.element.parentNode?.appendChild(this.wrapper)
-    
         // then, hide the base element (and set anchor-name)
+    
         this.element.style.visibility = 'hidden'
         this.element.style.anchorName = '--renderer'+this.id
 

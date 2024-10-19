@@ -8,7 +8,12 @@ _(publishing to npm... eventually...)_
 
 ## Usage
 
-_(...)_
+Using markii.js' custom attributes in your HTML:
+
+```html
+<!-- -->
+<h1 mq-speed-x="0.01">Hello!</h1>
+```
 
 ## Caveats
 
