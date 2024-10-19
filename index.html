@@ -1,36 +1,111 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + TS</title>
-    <style>
-      body {
-        background-color: #1f1f1f;
-        color: whitesmoke;
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vite + TS</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: #1f1f1f;
+      color: whitesmoke;
+      font-family: sans-serif;
+
+      max-width: 80ch;
+      margin-inline: auto;
+    }
+
+    header {
+      display: flex;
+      flex-direction: column;
+    }
+
+    hr {
+      margin-block: 1rem;
+    }
+
+    main {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    article {
+      margin-block: 1rem;
+      margin-left: 1rem;
+      padding-left: 1rem;
+      border-left: 2px solid gray;
+    }
+  </style>
+</head>
+
+<body>
+  <header data-nohover>
+    <h1>markii.js</h1>
+    <p>a marquee replacement for the new year</p>
+  </header>
+  <hr />
+  <main data-nohover>
+    <article data-nohover>
+      <h2>introduction</h2>
+      <p><b>markii.js</b> is a JavaScript library (for modern browsers) that replicates/imitates (and aims to enhance
+        upon) the now deprecated
+        <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/marquee" rel="external">&lt;marquee&gt;</a>
+        element.
+      </p>
+    </article>
+    <article data-nohover>
+      <h2>demonstration</h2>
+      <button id="hover-btn">Click me to enable 'marquee on hover' mode</button>
+    </article>
+  </main>
+  <hr />
+  <footer data-nohover>
+    <p>by webcrawls</p>
+  </footer>
+  <script type="module">
+    import { createMarkii } from '/src/main.ts'
+
+    // init markii
+    const markii = createMarkii(document.body)
+    markii.watch()
+
+    // state
+    let enabled = false
+    let currentElement = null
+    let speedX = 0.01
+
+    // grab the button
+    const disabledText = "Click me to enable 'marquee on hover' mode"
+    const enabledText = "Click me to disable 'marquee on hover' mode"
+    const btn = document.querySelector("#hover-btn")
+    const updateText = () => btn.innerHTML = enabled ? enabledText : disabledText
+
+
+    btn.addEventListener('click', event => {
+      enabled = !enabled
+      updateText()
+    })
+
+    document.addEventListener("mouseover", event => {
+      if (!enabled) return 
+      let target = event.target
+
+      if (target === document.body || target.hasAttribute("data-nohover")) return;
+
+      if (currentElement) {
+        currentElement.removeAttribute("data-marquee-x")
       }
 
-      h1 {
-        display: inline-block;
-      }
-    </style>
-  </head>
-  <body>
-    <div id="app">
-      <h1 data-marquee-x="0.005"
-          data-marquee-mode="anchor">hello chat</h1>
-      <br/>
-      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Cat_August_2010-4.jpg/1920px-Cat_August_2010-4.jpg"
-           width="150px"
-           height="150px"
-           data-marquee-x="0.01"
-           data-marquee-y="0.01"/>
-      <!-- <div style="width: 200px; height: 200px; background-color: darkgray; color: black; padding: 1rem;"
-            data-marquee-x="0.1" data-marquee-y="0.1" data-marquee-tiled="true">
-        <p>container can be tiled</p>
-        <p>superb cool</p>
-      </div> -->
-    </div>
-    <script type="module" src="/src/main.ts"></script>
-  </body>
+      currentElement = target
+      currentElement.setAttribute("data-marquee-x", "" + speedX)
+    })
+  </script>
+</body>
+
 </html>
