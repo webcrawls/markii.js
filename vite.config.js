@@ -7,7 +7,12 @@ export default defineConfig({
       entry: resolve(__dirname, 'src/main.ts'),
       name: "markii",
       fileName: (format) => `index.${format}.js`,
-      formats: ['es']
+      formats: ['es', 'umd']
+    },
+    rollupOptions: {
+      input: {
+        'index.html': 'index.html'
+      }
     }
   }
 })
