@@ -114,14 +114,14 @@
       if (target === document.body || target.hasAttribute("data-nohover")) return;
 
       if (currentElement) {
-        currentElement.removeAttribute("data-marquee-x")
+        currentElement.removeAttribute("mq-speed-x")
       }
 
       currentElement = target
   
-      currentElement.setAttribute("data-marquee-x", "" + speedX)
+      currentElement.setAttribute("mq-speed-x", "" + speedX)
       if (document.querySelector("#fill-btn").value) {
-        currentElement.setAttribute("data-marquee-fill", "true")        
+        // currentElement.setAttribute("data-marquee-fill", "true")        
       }
     })
   </script>
