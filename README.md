@@ -1,6 +1,6 @@
 # markii.js
 
-A developer-friendly library recreating the <marquee> feature.
+A developer-friendly library recreating the &lt;marquee&gt; feature.
 
 ## Installation
 
