@@ -51,13 +51,14 @@
 
     h1 {
       display: inline;
+      font-style: italic;
     }
   </style>
 </head>
 
 <body>
   <header>
-    <h1 mq-speed-x="0.001" mq-speed-fill>markii.js</h1>
+    <h1 mq-speed-x="0.001" mq-tiled>markii.js &nbsp;</h1>
     <p>a marquee replacement for the new year</p>
   </header>
   <hr />
@@ -70,7 +71,7 @@
         element.
       </p>
     </article>
-    <article data-nohover>
+    <article mq-speed-x="0.001">
       <h2>usage / demonstration</h2>  
       <p>when markii.js is on your site, any elements with the <code>mq-speed-x</code> or <code>mq-speed-y</code> attributes (which should be values between -1.0 and 1.0) will automatically become marquee elements.</p>
     </article>

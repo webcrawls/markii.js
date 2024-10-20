@@ -6,6 +6,10 @@ export interface MarqueeRenderer {
 
     speedX: number
     speedY: number
+
+    progressX: number
+    progressY: number
+
     tiled: boolean
 
     setup(): void

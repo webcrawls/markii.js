@@ -1,68 +1,93 @@
-import { MarqueeRenderer, getId } from ".";
+import { getId, MarqueeRenderer } from ".";
 import { map } from "../math";
 
-/**
- * A renderer that uses CSS Anchor to display a marquee "on top of" an element.
- */
+type Dimensions = { x: number, y: number }
+
 export class AnchorRenderer implements MarqueeRenderer {
 
-    private id: number
-    private element: HTMLElement
-    private wrapper: HTMLElement = undefined
-    private clones: ElementClone[] = []
+    // the internal id of the renderer. used to create unique anchor names.
+    private id: number = getId()
 
-    private width: number = 0.0;
-    private height: number = 0.0;
+    // desired speed of the marquee animation, from -1.0 to 1.0.
+    public speedX: number = 0.01;
+    public speedY: number = 0.0;
 
-    private progressX = 0.0;
-    private progressY = 0.0;
+    // whether or not the marquee should "tile"
+    //  (this fucks shit up)
+    public tiled: boolean = false;
 
-    public tiled = true
-    public speedX = 0.01;
-    public speedY = 0;
+    // the progress of animation in both x and y
+    public progressY: number = 0.0;
+    public progressX: number = 0.0;
 
-    constructor(element: HTMLElement) {
-        this.element = element
-        this.id = getId();
+    // the original target element we want to marquee.
+    // if it is an element -without- children, :
+    // if it is an element -with- children, :
+    private target: HTMLElement = undefined
+
+    // the original target dimensions. treat this as the 'canvas size'
+    private targetDimensions: Dimensions = { x: 0, y: 0 }
+
+    // a constructed element that will contain our marquee content.
+    // the goal is to position the wrapper directly on top of the target element, with the same dimensions
+    private targetWrapper: HTMLElement = undefined
+
+    // todo
+    private contentDimensions: Dimensions = { x: 0, y: 0 }
+
+    // todo
+    private children: HTMLElement[] = []
+    private childrenProgress: Dimensions[] = []
+
+    constructor(target: HTMLElement) {
+        console.log("Constructing anchor renderer", target)
+        this.target = target
+
+        const targetRect = target.getBoundingClientRect()
+        this.targetDimensions = { x: targetRect.width, y: targetRect.height }
+
     }
 
     setup(): void {
-        ({ width: this.width, height: this.height } = this.element.getBoundingClientRect())
+        this.wrapTarget()
+        this.initializeClones()
 
-        // create a wrapper element that will "sit atop" the base element
-        this.wrapper = createMarqueeWrapper(this.element, this.id)
-        this.element.parentNode?.appendChild(this.wrapper)
-
-        // then, hide the base element (and set anchor-name)
-        this.element.style.visibility = 'hidden'
-        this.element.style.anchorName = '--renderer' + this.id
-
-        if (this.tiled) {
-            // calculate x requirement. calculate y requirement.
-            // create all those elements
-            // offset them somehow? (we're already using transform)
-            // we'll need to store individual state I THINK
-            // or not, and all values can be derived from progress, dimensions, and position
-
-            const elementX = this.width
-            const parentX = this.wrapper.getBoundingClientRect().width
-        } else {
-            // create a copy of the base element
-            let copy = createMarqueeCopy(this.element, this.id)
-            this.copies.push(copy)
-            this.wrapper.appendChild(copy)
-        }
-
-        console.log(this.wrapper)
+        if (this.speedX != 0.0) this.progressX = -1.0
     }
 
     remove(): void {
-        this.wrapper.remove()
-        this.element.style.visibility = 'visible'
-        this.element.style.anchorName = ''
+        // throw new Error("Method not implemented.");
+    }
+    render(): void {
+        this.tickProgress()
+
+        let index = 0;
+        for (const child of this.children) {
+            let translateX = (this.contentDimensions.x * index)
+
+            translateX = map(
+                this.progressX,
+                -1.0, 1.0,
+                -this.contentDimensions.x,
+                this.targetDimensions.x
+            ) + (this.contentDimensions.x * index)
+
+            if (translateX >= this.targetDimensions.x) {
+                translateX = map(
+                    this.progressX,
+                    -1.0, 1.0,
+                    -this.contentDimensions.x,
+                    this.targetDimensions.x
+                ) - (this.contentDimensions.x * (this.children.length - index))
+            }
+
+            child.style.transform = `translateX(${Math.round(translateX)}px)`
+            index += 1
+        }
+
     }
 
-    render(): void {
+    private tickProgress() {
         if (this.progressX > 1) {
             this.progressX = -1.0
         }
@@ -83,49 +108,44 @@ export class AnchorRenderer implements MarqueeRenderer {
         this.progressY = this.progressY + this.speedY
     }
 
-}
+    private wrapTarget() {
+        this.targetWrapper = document.createElement("div")
+        this.targetWrapper.style.position = "absolute"
+        this.targetWrapper.style.top = "anchor(--mq-render-" + this.id + " start)"
+        this.targetWrapper.style.height = this.targetDimensions.y + "px"
+        this.targetWrapper.style.width = this.targetDimensions.x + "px"
+        this.targetWrapper.style.overflow = "hidden"
 
-class ElementClone {
+        this.target.parentElement?.appendChild(this.targetWrapper)
 
-    constructor(wrapper: HTMLElement,
-                target: HTMLElement) {
+        this.target.style.anchorName = "--mq-render-" + this.id
+        this.target.style.visibility = "hidden"
     }
 
-    update() {
-        let translateX = !this.speedX ? 0.0 : map(this.progressX, -1.0, 1.0, -this.dimensions.width, this.wrapper.getBoundingClientRect().width)
-        let translateY = !this.speedY ? 0.0 : map(this.progressY, -1.0, 1.0, -this.dimensions.height, 120)
+    private initializeClones() {
+        const createClone = () => {
+            const newTarget = this.target.cloneNode(true)
+            newTarget.style.position = "absolute"
+            newTarget.style.visibility = "visible"
+            newTarget.style.anchorName = ""
+            newTarget.style.display = "inline-block"
+            // newTarget.style.border = "2px solid blue"
+            this.targetWrapper.appendChild(newTarget)
+            this.children.push(newTarget)
+            this.childrenProgress.push(0.0)
+            return newTarget
+        }
 
-        let transform = `translate(${Math.round(translateX)}px, ${Math.round(translateY)}px)`
-        this.copy.style.transform = transform
+        const first = createClone()
+        const rect = first.getBoundingClientRect()
+        this.contentDimensions = { x: rect.width, y: rect.height }
+
+        if (this.tiled) {
+            const xtimes = Math.round(this.targetDimensions.x / this.contentDimensions.x)
+            console.log({xtimes})
+            for (let i = 0; i < xtimes; i++) {
+                createClone()
+            }
+        }
     }
-}
-
-const createMarqueeWrapper = (parent: HTMLElement, id: number): HTMLElement => {
-    const wrapperElement: HTMLDivElement = document.createElement("div")
-    const dimensions = parseDimensions(parent)
-
-    wrapperElement.id = `markii-wrapper-${id}`
-    wrapperElement.style.position = "absolute";
-    wrapperElement.style.top = `anchor(--renderer${id} self-start)`
-    wrapperElement.style.width = `${dimensions.width}px`
-    wrapperElement.style.height = `${dimensions.height}px`
-
-    wrapperElement.style.overflow = "hidden"
-    return wrapperElement
-}
-
-const createMarqueeCopy = (base: HTMLElement, id: number): HTMLElement => {
-    // create a "full copy" of the node?
-    const copy: HTMLElement = base.cloneNode(true)
-    copy.style.position = 'absolute';
-    copy.style.top = `anchor(--renderer${id} self-start)`
-    copy.style.margin = '0'
-    copy.style.visibility = 'visible'
-    copy.style.anchorName = ''
-    return copy
-}
-
-const parseDimensions = (root: HTMLElement): { width: number, height: number } => {
-    const { width, height } = root.getBoundingClientRect()
-    return { width, height }
 }

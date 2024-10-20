@@ -1,6 +1,6 @@
-import { DATA_MARQUEE_X_SPEED, DATA_MARQUEE_Y_SPEED } from './main'
+import { DATA_MARQUEE_TILING, DATA_MARQUEE_X_SPEED, DATA_MARQUEE_Y_SPEED } from './main'
 import { type MarqueeRenderer } from './render'
-import { AnchorRenderer } from './render/anchor-new'
+import { AnchorRenderer } from './render/anchor'
 
 export interface MarqueeElement {
     paused: boolean,
@@ -29,6 +29,7 @@ export const createMarquee = (element: HTMLElement): MarqueeElement => {
     renderer = new AnchorRenderer(element)
     renderer.speedY = parseFloat(element.getAttribute(DATA_MARQUEE_Y_SPEED) ?? "0.0")
     renderer.speedX = parseFloat(element.getAttribute(DATA_MARQUEE_X_SPEED) ?? "0.0")
+    renderer.tiled = element.hasAttribute(DATA_MARQUEE_TILING)
     renderer.setup()
 
     const observer = new MutationObserver((changes) => {
