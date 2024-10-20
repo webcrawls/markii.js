@@ -1,6 +1,6 @@
 import { DATA_MARQUEE_X_SPEED, DATA_MARQUEE_Y_SPEED } from './main'
 import { type MarqueeRenderer } from './render'
-import { AnchorSingleRenderer } from './render/single-anchor'
+import { AnchorRenderer } from './render/anchor-new'
 
 export interface MarqueeElement {
     paused: boolean,
@@ -26,29 +26,15 @@ export const createMarquee = (element: HTMLElement): MarqueeElement => {
 
     // determine appropriate renderer type...
     // // (this is where we'd say 'oh, use a canvas renderer for images')
-    if (element.children.length === 0) {
-        renderer = new AnchorSingleRenderer(element)
-    } else {
-        throw new Error("I don't know how to Marquee-ify" + element)
-    }
-
+    renderer = new AnchorRenderer(element)
     renderer.speedY = parseFloat(element.getAttribute(DATA_MARQUEE_Y_SPEED) ?? "0.0")
     renderer.speedX = parseFloat(element.getAttribute(DATA_MARQUEE_X_SPEED) ?? "0.0")
     renderer.setup()
 
     const observer = new MutationObserver((changes) => {
-        let hasAny = false
+                // would set up a 'resize observer' to update dims here?
+        // would set up a 'mutation observer' to watch for prop changes here?
 
-        for (let attr of [DATA_MARQUEE_X_SPEED, DATA_MARQUEE_Y_SPEED]) {
-            if (element.hasAttribute(attr)) {
-                hasAny = true
-                return
-            }
-        }
-
-        if (!hasAny) {
-            stop()
-        }
     })
 
     observer.observe(element, { attributes: true })

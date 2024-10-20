@@ -48,12 +48,16 @@
       padding-left: 1rem;
       border-left: 2px solid gray;
     }
+
+    h1 {
+      display: inline;
+    }
   </style>
 </head>
 
 <body>
   <header>
-    <h1 mq-speed-x="0.001">markii.js</h1>
+    <h1 mq-speed-x="0.001" mq-speed-fill>markii.js</h1>
     <p>a marquee replacement for the new year</p>
   </header>
   <hr />
@@ -67,7 +71,11 @@
       </p>
     </article>
     <article data-nohover>
-      <h2>demonstration</h2>
+      <h2>usage / demonstration</h2>  
+      <p>when markii.js is on your site, any elements with the <code>mq-speed-x</code> or <code>mq-speed-y</code> attributes (which should be values between -1.0 and 1.0) will automatically become marquee elements.</p>
+    </article>
+    <article data-nohover>
+      <h2>play around</h2>  
       <button id="hover-btn">Click me to enable 'marquee on hover' mode</button>
       <br/>
       <input id="fill-btn" type="checkbox"/>
@@ -76,7 +84,7 @@
     <article>
       <h2>caveats</h2>
       <ul>
-        <li>Unfortunately, this library currently only works on the most recent versions of Chromium-based browsers. This is distressing as a Firefox user (and someone who cares about iOS market share). I will be implementing alternative rendering methods in the future.</li>
+        <li>Unfortunately, this library currently only works on the most recent versions of Chromium-based browsers. This is distressing as a Firefox user (and someone who cares about iOS marketshare). I will be implementing alternative rendering methods in the future.</li>
       </ul>
     </article>
   </main>
