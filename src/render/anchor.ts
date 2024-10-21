@@ -2,6 +2,7 @@ import { getId, MarqueeRenderer } from ".";
 import { map } from "../math";
 
 type Dimensions = { x: number, y: number }
+type Child = { element: HTMLElement, position: Dimensions }
 
 export class AnchorRenderer implements MarqueeRenderer {
 
@@ -32,12 +33,9 @@ export class AnchorRenderer implements MarqueeRenderer {
     // the goal is to position the wrapper directly on top of the target element, with the same dimensions
     private targetWrapper: HTMLElement = undefined
 
-    // todo
     private contentDimensions: Dimensions = { x: 0, y: 0 }
 
-    // todo
-    private children: HTMLElement[] = []
-    private childrenProgress: Dimensions[] = []
+    private children: Child[] = []
 
     constructor(target: HTMLElement) {
         console.log("Constructing anchor renderer", target)
@@ -50,7 +48,7 @@ export class AnchorRenderer implements MarqueeRenderer {
 
     setup(): void {
         this.wrapTarget()
-        this.initializeClones()
+        this.initChildren()
 
         if (this.speedX != 0.0) this.progressX = -1.0
     }
@@ -61,28 +59,19 @@ export class AnchorRenderer implements MarqueeRenderer {
     render(): void {
         this.tickProgress()
 
-        let index = 0;
         for (const child of this.children) {
-            let translateX = (this.contentDimensions.x * index)
+            child.position.x = child.position.x + this.speedX
+            child.position.y = child.position.y + this.speedY
 
-            translateX = map(
-                this.progressX,
-                -1.0, 1.0,
-                -this.contentDimensions.x,
-                this.targetDimensions.x
-            ) + (this.contentDimensions.x * index)
-
-            if (translateX >= this.targetDimensions.x) {
-                translateX = map(
-                    this.progressX,
-                    -1.0, 1.0,
-                    -this.contentDimensions.x,
-                    this.targetDimensions.x
-                ) - (this.contentDimensions.x * (this.children.length - index))
+            if (child.position.x >= (this.targetDimensions.x)) {
+                child.position.x = -this.contentDimensions.x
             }
 
-            child.style.transform = `translateX(${Math.round(translateX)}px)`
-            index += 1
+            if (child.position.y >= (this.targetDimensions.y)) {
+                child.position.y = -this.contentDimensions.y
+            }
+
+            child.element.style.transform = `translate(${Math.round(child.position.x)}px, ${Math.round(child.position.y)}px)`
         }
 
     }
@@ -122,29 +111,34 @@ export class AnchorRenderer implements MarqueeRenderer {
         this.target.style.visibility = "hidden"
     }
 
-    private initializeClones() {
-        const createClone = () => {
-            const newTarget = this.target.cloneNode(true)
-            newTarget.style.position = "absolute"
-            newTarget.style.visibility = "visible"
-            newTarget.style.anchorName = ""
-            newTarget.style.display = "inline-block"
+    private initChildren() {
+        const createChild = () => {
+            const child = {
+                element: this.target.cloneNode(true),
+                position: {
+                    x: (this.children.length * this.contentDimensions.x),
+                    y: 0
+                }
+            }
+            child.element.style.position = "absolute"
+            child.element.style.visibility = "visible"
+            child.element.style.anchorName = ""
+            child.element.style.display = "inline-block"
             // newTarget.style.border = "2px solid blue"
-            this.targetWrapper.appendChild(newTarget)
-            this.children.push(newTarget)
-            this.childrenProgress.push(0.0)
-            return newTarget
+            this.targetWrapper.appendChild(child.element)
+            this.children.push(child)
+            return child
         }
 
-        const first = createClone()
-        const rect = first.getBoundingClientRect()
+        const first = createChild()
+        const rect = first.element.getBoundingClientRect()
         this.contentDimensions = { x: rect.width, y: rect.height }
 
         if (this.tiled) {
             const xtimes = Math.round(this.targetDimensions.x / this.contentDimensions.x)
-            console.log({xtimes})
+            console.log({ xtimes })
             for (let i = 0; i < xtimes; i++) {
-                createClone()
+                createChild()
             }
         }
     }

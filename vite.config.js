@@ -8,11 +8,6 @@ export default defineConfig({
       name: "markii",
       fileName: (format) => `index.${format}.js`,
       formats: ['es', 'umd']
-    },
-    rollupOptions: {
-      input: {
-        'index.html': 'index.html'
-      }
     }
   }
 })
